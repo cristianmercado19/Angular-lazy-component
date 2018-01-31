@@ -16,9 +16,10 @@ import { PlugInBase } from './plugins/plugin-base';
 })
 export class AppComponent {
   title = 'dynamic component POC';
-  @ViewChild('plugin', {read: ViewContainerRef}) adHost: ViewContainerRef;
+  @ViewChild('plugin', { read: ViewContainerRef })
+  adHost: ViewContainerRef;
 
-  myState = { name: ''};
+  myState = { name: '' };
   constructor(
     private lazyDinamicComponentFactoryService: LazyDynamicComponentFactoryService
   ) { }
@@ -29,20 +30,20 @@ export class AppComponent {
     }
 
     this.lazyDinamicComponentFactoryService.buildComponentFactory<PlugInBase>(value, 'PlugInBase')
-    .take(1)
-    .subscribe( (componentFactory: ComponentFactory<PlugInBase>) => {
-      const viewContainerRef = this.adHost;
-      viewContainerRef.clear();
-      const componentRef = viewContainerRef.createComponent(componentFactory);
-      (<PlugInBase>componentRef.instance).data = this.myState;
-      (<PlugInBase>componentRef.instance).dataChange.subscribe (
-        (event) =>
-        {
-          alert(JSON.stringify(event));
-        }
-      );
-      componentRef.onDestroy( this.reportDestroy);
-    });
+      .take(1)
+      .subscribe((componentFactory: ComponentFactory<PlugInBase>) => {
+        const viewContainerRef = this.adHost;
+        viewContainerRef.clear();
+        const componentRef = viewContainerRef.createComponent(componentFactory);
+
+        (<PlugInBase>componentRef.instance).data = this.myState;
+        (<PlugInBase>componentRef.instance).dataChange.subscribe(
+          (event) => {
+            alert(JSON.stringify(event));
+          }
+        );
+        componentRef.onDestroy(this.reportDestroy);
+      });
   }
 
   reportDestroy(c) {
